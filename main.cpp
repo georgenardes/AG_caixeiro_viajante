@@ -10,6 +10,18 @@ using namespace std;
 typedef std::vector<std::vector<int>> Problema;
 typedef std::vector<Problema> Problemas;
 
+
+/**
+ * Este struct representa uma solução individual do problema,
+ * através da qual deve ser possível demonstrar como o problema é
+ * resolvido e designar um nível de qualidade.
+ */
+struct Solucao {
+    std::vector<int> trajeto; // sequencia de cidades
+    int distancia;            // distancia total (menor distancia melhor)
+};
+
+
 /**
     Declarações de protótipos de funções
 */
@@ -24,6 +36,39 @@ Problemas lerProblemas(const std::string& caminho);
 int retornaDistacia (Problema problema, int cidade1, int cidade2);
 
 
+int avaliar (Solucao& s){
+    int distancia_total = 0;
+
+    // TODO calcular distancia total
+
+    return distancia_total;
+}
+
+std::vector<int> geraTrajeto (int num_cidades){
+    std::vector<int> trajeto;
+
+    // TODO gerar trajeto
+
+    return trajeto;
+}
+
+/* retorna uma população inicial */
+std::vector<Solucao> populacaoInicial(Problema problema, int tamanho_populacao){
+    std::vector<Solucao> populacao;
+
+    int num_cidades = problema[0].size();
+    int cidade_aleatoria = 0;
+
+    for(int i = 0; i < tamanho_populacao; i++){
+        Solucao solucao;
+        solucao.trajeto = geraTrajeto(num_cidades);
+        avaliar(solucao);
+        populacao.push_back(solucao);
+    }
+
+    return populacao;
+}
+
 /**
     main
 */
@@ -32,6 +77,8 @@ int main()
 {
     Problemas problemas;
     problemas = lerProblemas("C:/Users/User/Desktop/univali/IA/AG_caixeiro_viajante/problemas.csv");
+
+    cout << "distancia " << retornaDistacia(problemas[0], 2, 1) << endl;
 
     return 0;
 }
@@ -51,7 +98,6 @@ Problema processarLinha(const std::string& linha) {
     std::getline(stream, pedaco, ';');
     if (!pedaco.empty()) {
         qtd_cidades = std::stoi(pedaco);
-        cout << "Lendo distancias entre " << qtd_cidades << " cidades..." << endl;
     }else{
         return resultado;
     }
@@ -66,7 +112,6 @@ Problema processarLinha(const std::string& linha) {
         }
 
         if (qtd_lida == (qtd_cidades-1)-cidade){
-            cout << "cidade " << cidade+1 << " lida distancias " << qtd_lida << endl;
             distancias.emplace(distancias.begin(), 0);
             resultado.push_back(distancias);
             distancias.clear();
@@ -105,6 +150,7 @@ int retornaDistacia (Problema problema, int cidade1, int cidade2){
         return 0;
     }
 
+    /* verifica os indices */
     if (cidade1 < cidade2){
         distancia = problema[cidade1][cidade2-cidade1];
     } else if (cidade1 > cidade2){
