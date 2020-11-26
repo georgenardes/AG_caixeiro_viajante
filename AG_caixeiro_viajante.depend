@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1606351921 source:c:\users\user\desktop\univali\ia\ag_caixeiro_viajante\main.cpp
+	<iostream>
+	<vector>
+	<fstream>
+	<string>
+	<regex>
+
