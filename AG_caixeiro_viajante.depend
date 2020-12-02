@@ -7,3 +7,18 @@
 	<regex>
 	<time.h>
 
+1606951916 source:/home/diogomarchi/Documentos/FACULDADE-MATERIAS/inteligenciaArtificial/AG_caixeiro_viajante/funcoes.cpp
+	"funcoes.h"
+	<iostream>
+
+1606951916 /home/diogomarchi/Documentos/FACULDADE-MATERIAS/inteligenciaArtificial/AG_caixeiro_viajante/funcoes.h
+	<vector>
+	<fstream>
+	<string>
+	<regex>
+	<time.h>
+
+1606951952 source:/home/diogomarchi/Documentos/FACULDADE-MATERIAS/inteligenciaArtificial/AG_caixeiro_viajante/main.cpp
+	<iostream>
+	"funcoes.h"
+
