@@ -1,13 +1,5 @@
 # depslib dependency file v1.0
-1606513848 source:c:\users\user\desktop\univali\ia\ag_caixeiro_viajante\main.cpp
-	<iostream>
-	<vector>
-	<fstream>
-	<string>
-	<regex>
-	<time.h>
-
-1606918686 source:/home/diogomarchi/Documentos/FACULDADE-MATERIAS/inteligenciaArtificial/AG_caixeiro_viajante/main.cpp
+1606946477 source:c:\users\user\desktop\univali\ia\ag_caixeiro_viajante\main.cpp
 	<iostream>
 	<vector>
 	<fstream>
