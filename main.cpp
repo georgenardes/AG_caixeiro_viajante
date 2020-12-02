@@ -52,128 +52,26 @@ void geraTrajeto (Solucao& s, int num_cidades);
 /* Gera populacoa inicial */
 Populacao populacaoInicial(Problema problema, int tamanho_populacao);
 
-
 /* Torneio entre dois indivíduo */
-int torneio(double p, Populacao populacao) {
-    int a = std::rand() % populacao.size();
-    int b = std::rand() % populacao.size();
+int torneio(double p, Populacao populacao);
 
-    if (gerarAleatorio() < p) {
-        // Retornar o indivíduo de menor distancia
-        if (populacao[a].distancia < populacao[b].distancia) {
-            return a;
-        } else {
-            return b;
-        }
-    } else {
-        // Retornar o indivíduo de maior distancia
-        if (populacao[a].distancia > populacao[b].distancia) {
-            return a;
-        } else {
-            return b;
-        }
-    }
-}
+void evoluir(Problema problema, Populacao& populacao);
 
-/* seleciona dois indivíduos por torneio */
-std::vector<int> selecionar(Populacao populacao) {
-    std::vector<int> individuos;
-
-    // ===================
-
-    double p = 0.8;
-
-    int a = torneio(p, populacao);
-    int b;
-
-    do {
-        b = torneio(p, populacao);
-    } while (a == b);
-
-    // ===================
-
-    std::cout << "individuos selecionados " << a << " " << b << endl << endl;
-
-    individuos.push_back(a);
-    individuos.push_back(b);
-
-    return individuos;
-}
-
-/* cruzamento */
-std::vector<Solucao> aplicarCruzamento(Solucao s1, Solucao s2){
-    std::vector<Solucao> filhos;
-
-    Solucao filhoA = s1;
-    Solucao filhoB = s2;
-
-    double chance = 0.9;
-
-    if (gerarAleatorio() < chance) {
-        int ponto = std::rand() % s1.trajeto.size();
-
-       /**
-            Aplicar logica de cruzamento aqui
-       */
-
-    }
-
-    filhos.push_back(filhoA);
-    filhos.push_back(filhoB);
-
-    return filhos;
-}
-
+const Solucao& getMelhorIndividuo(Populacao populacao);
 
 /* mutação em individuos */
-void aplicarMutacao (Solucao& s){
+void aplicarMutacao (Solucao& s);
 
-    if(gerarAleatorio() < 0.05){
-        int ponto1 = std::rand() % s.trajeto.size();
-        int ponto2 = std::rand() % s.trajeto.size();
-        std::swap(s.trajeto[ponto1], s.trajeto[ponto2]);
-    }
-}
+/* seleciona dois indivíduos por torneio */
+std::vector<int> selecionar(Populacao populacao);
 
-/**
- * Recupera o indivíduo com maior aptidão de toda
- * a população atual (somente leitura).
- */
-const Solucao& getMelhorIndividuo(Populacao populacao) {
-    int melhor = 0;
-    for (int i = 1; i < populacao.size(); i++) {
-        if (populacao[i].distancia < populacao[melhor].distancia) {
-            melhor = i;
-        }
-    }
+/* cruzamento */
+std::vector<Solucao> aplicarCruzamento(Solucao s1, Solucao s2);
 
-    return populacao[melhor];
-}
+/* gera filho*/
+Solucao geraFilho(Solucao pai, Solucao mae);
 
-void evoluir(Problema problema, Populacao& populacao) {
-    Populacao novaPopulacao;
 
-    while (novaPopulacao.size() < populacao.size()) {
-        std::vector<int> pais = selecionar(populacao);
-
-        std::vector<Solucao> filhos = aplicarCruzamento(populacao[pais[0]], populacao[pais[1]]);
-
-        aplicarMutacao(filhos[0]);
-        aplicarMutacao(filhos[1]);
-
-        avaliar(filhos[0], problema);
-        avaliar(filhos[1], problema);
-
-        novaPopulacao.push_back(filhos[0]);
-        novaPopulacao.push_back(filhos[1]);
-    }
-
-    // Elitismo (opcional, porém bom)
-    int indice = std::rand() % novaPopulacao.size();
-    novaPopulacao[indice] = getMelhorIndividuo(populacao);
-
-    populacaopopulacao = novaPopulacao;
-}
 
 /**
     main
@@ -185,10 +83,17 @@ int main()
     Problemas problemas;
     Solucao solucao;
 
-    //problemas = lerProblemas("/home/diogomarchi/Documentos/FACULDADE-MATERIAS/inteligenciaArtificial/AG_caixeiro_viajante/problemas.csv");
-    problemas = lerProblemas("C:/Users/User/Desktop/univali/IA/AG_caixeiro_viajante/problemas.csv");
+    problemas = lerProblemas("/home/diogomarchi/Documentos/FACULDADE-MATERIAS/inteligenciaArtificial/AG_caixeiro_viajante/problemas.csv");
+    //problemas = lerProblemas("C:/Users/User/Desktop/univali/IA/AG_caixeiro_viajante/problemas.csv");
+
+    Populacao populacao;
+    Problema problema = problemas[0];
+
+    populacao = populacaoInicial(problema, 5);
+    geraFilho(populacao[0], populacao[1]);
 
 
+/*
     for (int prob = 0; prob < problemas.size(); prob++){
         Problema problema = problemas[prob];
 
@@ -202,7 +107,10 @@ int main()
 
             std::cout << "Melhor solucao encontrada tem distancia " << melhor.distancia << "\n";
         }
+
     }
+    */
+
 
 
 
@@ -340,6 +248,8 @@ void geraTrajeto (Solucao& s, int num_cidades){
 
 /* Gera populacao inicial */
 Populacao populacaoInicial(Problema problema, int tamanho_populacao){
+
+
     Populacao populacao;
 
     int num_cidades = problema[0].size();
@@ -354,4 +264,148 @@ Populacao populacaoInicial(Problema problema, int tamanho_populacao){
     }
 
     return populacao;
+}
+
+/**
+ * Recupera o indivíduo com maior aptidão de toda
+ * a população atual (somente leitura).
+ */
+const Solucao& getMelhorIndividuo(Populacao populacao) {
+    int melhor = 0;
+    for (int i = 1; i < populacao.size(); i++) {
+        if (populacao[i].distancia < populacao[melhor].distancia) {
+            melhor = i;
+        }
+    }
+
+    return populacao[melhor];
+}
+
+/* seleciona dois indivíduos por torneio */
+std::vector<int> selecionar(Populacao populacao) {
+    std::vector<int> individuos;
+
+    // ===================
+
+    double p = 0.8;
+
+    int a = torneio(p, populacao);
+    int b;
+
+    do {
+        b = torneio(p, populacao);
+    } while (a == b);
+
+    // ===================
+
+    std::cout << "individuos selecionados " << a << " " << b << endl << endl;
+
+    individuos.push_back(a);
+    individuos.push_back(b);
+
+    return individuos;
+}
+
+/* mutação em individuos */
+void aplicarMutacao (Solucao& s){
+    if(gerarAleatorio() < 0.05){
+        int ponto1 = std::rand() % s.trajeto.size();
+        int ponto2 = std::rand() % s.trajeto.size();
+        std::swap(s.trajeto[ponto1], s.trajeto[ponto2]);
+    }
+}
+
+void evoluir(Problema problema, Populacao& populacao) {
+
+    Populacao novaPopulacao;
+
+    while (novaPopulacao.size() < populacao.size()) {
+        std::vector<int> pais = selecionar(populacao);
+
+        std::vector<Solucao> filhos = aplicarCruzamento(populacao[pais[0]], populacao[pais[1]]);
+
+        aplicarMutacao(filhos[0]);
+        aplicarMutacao(filhos[1]);
+
+        avaliar(filhos[0], problema);
+        avaliar(filhos[1], problema);
+
+        novaPopulacao.push_back(filhos[0]);
+        novaPopulacao.push_back(filhos[1]);
+    }
+
+    // Elitismo (opcional, porém bom)
+    int indice = std::rand() % novaPopulacao.size();
+    novaPopulacao[indice] = getMelhorIndividuo(populacao);
+
+    populacao = novaPopulacao;
+}
+
+/* cruzamento */
+std::vector<Solucao> aplicarCruzamento(Solucao s1, Solucao s2){
+    std::vector<Solucao> filhos;
+
+    double chance = 0.9;
+
+    // Gera filho com a probabilidade
+    if (gerarAleatorio() < chance) {
+        filhos.push_back(geraFilho(s1,s2));
+        filhos.push_back(geraFilho(s2,s1));
+    }
+
+    return filhos;
+}
+
+
+/* Torneio entre dois indivíduo */
+int torneio(double p, Populacao populacao) {
+
+
+    int a = std::rand() % populacao.size();
+    int b = std::rand() % populacao.size();
+
+    if (gerarAleatorio() < p) {
+        // Retornar o indivíduo de menor distancia
+        if (populacao[a].distancia < populacao[b].distancia) {
+            return a;
+        } else {
+            return b;
+        }
+    } else {
+        // Retornar o indivíduo de maior distancia
+        if (populacao[a].distancia > populacao[b].distancia) {
+            return a;
+        } else {
+            return b;
+        }
+    }
+}
+
+
+Solucao geraFilho(Solucao pai, Solucao mae){
+    // Atribui ao filho as aracteristicas do pai
+    Solucao filho = pai;
+    // Valor de um ponto até o final para pegar caracteristicas da mae
+    int ponto = rand() % pai.trajeto.size();
+    int pos = ponto;
+    bool controle = true;
+
+    for(int i = ponto; i < (mae.trajeto.size() + ponto); i ++){
+
+        controle = true;
+        // verificar se o valor da mae ja esta no filho
+        for(int j = 0; j < ponto; j ++){
+            if(filho.trajeto[j] == mae.trajeto[i % mae.trajeto.size()]){
+                controle = false;
+                break;
+            }
+        }
+        // Se e um valor aceitavel, coloca no filho
+        if(controle == true){
+            filho.trajeto[pos] = mae.trajeto[i % mae.trajeto.size()];
+            pos++;
+        }
+    }
+    // Retorna o filho
+    return filho;
 }
