@@ -6,9 +6,9 @@ void printa_populacao(Populacao p)
     cout << "\n\n Exibindo populacao \n\n";
     for(int i = 0; i < p.size(); i++){
         cout << "individuo " << i << " da populacao = ";
-        for(int j = 0; j < p[i].trajeto.size(); j++)
-            cout << p[i].trajeto[j] << " ";
-        cout << " distancia = " << p[i].distancia << " idade = " << p[i].idade;
+        for(int j = 0; j < p[i].cromossomo.size(); j++)
+            cout << p[i].cromossomo[j] << " ";
+        cout << " aptidao = " << p[i].aptidao;
         cout << endl;
     }
     cout << endl;
@@ -95,51 +95,49 @@ int retornaDistacia ( Problema problema, int cidade1, int cidade2){
     return distancia;
 }
 
-/* Calcula distancia do trajeto */
-int avaliar ( Solucao s,  Problema problema){
+/* Calcula aptidao do cromossomo */
+int avaliar ( Individuo s,  Problema problema){
 
     int distancia_total = 0;
     int i;
 
-    int tam = s.trajeto.size();
+    int tam = s.cromossomo.size();
 
-    // calcula distancia total do trajeto gerado
+    // calcula aptidao total do cromossomo gerado
     for(i = 0; i < tam - 1; i ++){
-        distancia_total += retornaDistacia(problema, s.trajeto[i], s.trajeto[i+1]);
+        distancia_total += retornaDistacia(problema, s.cromossomo[i], s.cromossomo[i+1]);
     }
 
     // do ultimo para o primeiro
-    distancia_total += retornaDistacia(problema, s.trajeto[i+1], s.trajeto[0]);
+    distancia_total += retornaDistacia(problema, s.cromossomo[i+1], s.cromossomo[0]);
 
     return distancia_total;
 }
 
-/* Gera trajeto randomicamente */
-vector<int> geraTrajeto ( Solucao s, int num_cidades){
-    vector<int> trajeto;
+/* Gera trajeto(cromossomos) randomicamente */
+vector<int> geraCromossomo ( Individuo s, int num_cidades){
+    vector<int> cromossomo;
 
     int aux = 0, valorCorreto;
 
-    // gera trajeto
+    // gera cromossomo
     for(int i = 0; i < num_cidades; i++){
         do{
             aux = rand()%num_cidades;                // gera um valor randomico
             valorCorreto = 1;
 
-            for(int j = 0; j < trajeto.size(); j ++){//verifica se auxiliar é igual a algum valor do trajeto
-                if(aux == trajeto.at(j)){
+            for(int j = 0; j < cromossomo.size(); j ++){//verifica se auxiliar é igual a algum valor do cromossomo
+                if(aux == cromossomo.at(j)){
                     valorCorreto = 0;
                     break;
                 }
-
             }
-
         }while(valorCorreto == 0);
 
-        trajeto.push_back(aux);                      // Coloca a cidade no trajeto
+        cromossomo.push_back(aux);                      // Coloca a cidade no cromossomo
     }
 
-    return trajeto;
+    return cromossomo;
 }
 
 /* Gera populacao inicial */
@@ -149,13 +147,12 @@ Populacao populacaoInicial( Problema problema, int tamanho_populacao){
     int num_cidades = problema[0].size();
     int cidade_aleatoria = 0;
 
-    // Gera populacao inicial chamando as funcoes: gerar trajeto e avaliar
+    // Gera populacao inicial chamando as funcoes: gerar cromossomo e avaliar
     for(int i = 0; i < tamanho_populacao; i++){
-        Solucao solucao;
-        solucao.trajeto = geraTrajeto(solucao, num_cidades);
-        solucao.distancia = avaliar(solucao, problema);
-        solucao.idade = 0;
-        populacao.push_back(solucao);
+        Individuo individuo;
+        individuo.cromossomo = geraCromossomo(individuo, num_cidades);
+        individuo.aptidao = avaliar(individuo, problema);
+        populacao.push_back(individuo);
     }
 
     return populacao;
@@ -165,13 +162,13 @@ Populacao populacaoInicial( Problema problema, int tamanho_populacao){
  * Recupera o indivíduo com maior aptidão de toda
  * a população atual (somente leitura).
  */
-Solucao getMelhorIndividuo( Populacao populacao) {
+Individuo getMelhorIndividuo( Populacao populacao) {
 
-    Solucao s;
+    Individuo s;
 
     int melhor = 0;
     for (int i = 1; i < populacao.size(); i++) {
-        if (populacao[i].distancia < populacao[melhor].distancia) {
+        if (populacao[i].aptidao < populacao[melhor].aptidao) {
             melhor = i;
         }
     }
@@ -188,15 +185,15 @@ int torneio(double p,  Populacao populacao) {
     int b = rand() % populacao.size();
 
     if (gerarAleatorio() < p) {
-        // Retornar o indivíduo de menor distancia
-        if (populacao[a].distancia < populacao[b].distancia) {
+        // Retornar o indivíduo de menor distancia (melhor aptidao)
+        if (populacao[a].aptidao < populacao[b].aptidao) {
             return a;
         } else {
             return b;
         }
     } else {
-        // Retornar o indivíduo de maior distancia
-        if (populacao[a].distancia > populacao[b].distancia) {
+        // Retornar o indivíduo de maior distancia (pior aptidao)
+        if (populacao[a].aptidao > populacao[b].aptidao) {
             return a;
         } else {
             return b;
@@ -205,27 +202,23 @@ int torneio(double p,  Populacao populacao) {
 }
 
 /* mutação em individuos */
-vector<int> aplicarMutacao ( Solucao s){
-    vector<int> mutado = s.trajeto;
+vector<int> aplicarMutacao ( Individuo s){
+    vector<int> mutado = s.cromossomo;
 
-    if(gerarAleatorio() < 0.05){
-        int ponto1 = rand() % s.trajeto.size();
-        int ponto2 = rand() % s.trajeto.size();
-        swap(mutado[ponto1], mutado[ponto2]);
-    }
+    int ponto1 = rand() % s.cromossomo.size();
+    int ponto2 = rand() % s.cromossomo.size();
+    swap(mutado[ponto1], mutado[ponto2]);
 
     return mutado;
 
 }
 
 /* cruzamento */
-vector<Solucao> aplicarCruzamento( Solucao s1,  Solucao s2){
-    vector<Solucao> filhos;
+vector<Individuo> aplicarCruzamento( Individuo s1,  Individuo s2){
+    vector<Individuo> filhos;
 
-    double chance = 0.9;
-
-    // Gera filho com a probabilidade
-    if (gerarAleatorio() < chance) {
+    // Gera aleatorio para verificar se os pais terão filhos
+    if (gerarAleatorio() < PROB_GERAR_FILHO) {
         filhos.push_back(geraFilho(s1,s2));
         filhos.push_back(geraFilho(s2,s1));
     } else {
@@ -242,21 +235,26 @@ Populacao evoluir( Problema problema,  Populacao populacao) {
     Populacao novaPopulacao;
 
     while (novaPopulacao.size() < populacao.size()) {
+
+        // selecona dos individuos para serem pais
         vector<int> pais = selecionar(populacao);
-        vector<Solucao> filhos = aplicarCruzamento(populacao[pais[0]], populacao[pais[1]]);
 
-        filhos[0].trajeto = aplicarMutacao(filhos[0]);
-        filhos[1].trajeto = aplicarMutacao(filhos[1]);
+        // aplica cruzamento e gera os filhos
+        vector<Individuo> filhos = aplicarCruzamento(populacao[pais[0]], populacao[pais[1]]);
 
-        filhos[0].distancia = avaliar(filhos[0], problema);
-        filhos[1].distancia = avaliar(filhos[1], problema);
+        // gera aleatorio para verificar se deve aplicar mutacao
+        if(gerarAleatorio() < PROB_MUTACAO)
+            filhos[0].cromossomo = aplicarMutacao(filhos[0]);
+        if(gerarAleatorio() < PROB_MUTACAO)
+            filhos[1].cromossomo = aplicarMutacao(filhos[1]);
 
+        // avaliacao dos filhos gerados
+        filhos[0].aptidao = avaliar(filhos[0], problema);
+        filhos[1].aptidao = avaliar(filhos[1], problema);
+
+        // adiciona os filhos a nova populacao
         novaPopulacao.push_back(filhos[0]);
         novaPopulacao.push_back(filhos[1]);
-    }
-
-    for(int i = 0; i < novaPopulacao.size(); i++){
-        novaPopulacao[i].idade++;
     }
 
     // Elitismo (opcional, porém bom)
@@ -273,13 +271,11 @@ vector<int> selecionar( Populacao populacao) {
 
     // ===================
 
-    double p = 0.8;
-
-    int a = torneio(p, populacao);
+    int a = torneio(PROB_MELHOR, populacao);
     int b;
 
     do {
-        b = torneio(p, populacao);
+        b = torneio(PROB_MELHOR, populacao);
     } while (a == b);
 
     // ===================
@@ -292,35 +288,52 @@ vector<int> selecionar( Populacao populacao) {
 }
 
 
-Solucao geraFilho(Solucao pai, Solucao mae){
+Individuo geraFilho(Individuo pai, Individuo mae){
     // Atribui ao filho as aracteristicas do pai
-    Solucao filho = pai;
+    Individuo filho = pai;
+
     // Valor de um ponto até o final para pegar caracteristicas da mae
-    int ponto = rand() % pai.trajeto.size();
+    int ponto;
+
+    // para previnir que o ponto não esteja nos limites (0 ou tamanho maximo)
+    do{
+        ponto = rand() % pai.cromossomo.size();
+    }while(ponto == 0 || ponto == pai.cromossomo.size()-1);
+
     int pos = ponto;
     bool controle = true;
 
-    for(int i = ponto; i < (mae.trajeto.size() + ponto); i ++){
+    for(int i = ponto; i < (mae.cromossomo.size() + ponto); i ++){
 
         controle = true;
         // verificar se o valor da mae ja esta no filho
         for(int j = 0; j < ponto; j ++){
-            if(filho.trajeto[j] == mae.trajeto[i % mae.trajeto.size()]){
+            if(filho.cromossomo[j] == mae.cromossomo[i % mae.cromossomo.size()]){
                 controle = false;
                 break;
             }
         }
         // Se e um valor aceitavel, coloca no filho
         if(controle == true){
-            filho.trajeto[pos] = mae.trajeto[i % mae.trajeto.size()];
+            filho.cromossomo[pos] = mae.cromossomo[i % mae.cromossomo.size()];
             pos++;
         }
     }
 
     // inicializacao
-    filho.idade = 0;
-    filho.distancia = 0;
+    filho.aptidao = 0;
 
     // Retorna o filho
     return filho;
+}
+
+/* retorna o fatorial de um numero */
+int calculaFatorial(int num){
+    int numFatorial = 1;
+
+    // Calcula fatorial
+    for(int i = 1; i < num; i ++)
+        numFatorial += numFatorial * i;
+
+    return numFatorial;
 }

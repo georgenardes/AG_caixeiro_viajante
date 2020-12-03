@@ -1,11 +1,7 @@
 # depslib dependency file v1.0
-1606946477 source:c:\users\user\desktop\univali\ia\ag_caixeiro_viajante\main.cpp
+1606955669 source:c:\users\user\desktop\univali\ia\ag_caixeiro_viajante\main.cpp
 	<iostream>
-	<vector>
-	<fstream>
-	<string>
-	<regex>
-	<time.h>
+	"funcoes.h"
 
 1606951916 source:/home/diogomarchi/Documentos/FACULDADE-MATERIAS/inteligenciaArtificial/AG_caixeiro_viajante/funcoes.cpp
 	"funcoes.h"
@@ -21,4 +17,15 @@
 1606951952 source:/home/diogomarchi/Documentos/FACULDADE-MATERIAS/inteligenciaArtificial/AG_caixeiro_viajante/main.cpp
 	<iostream>
 	"funcoes.h"
+
+1606957623 source:c:\users\user\desktop\univali\ia\ag_caixeiro_viajante\funcoes.cpp
+	"funcoes.h"
+	<iostream>
+
+1606957430 c:\users\user\desktop\univali\ia\ag_caixeiro_viajante\funcoes.h
+	<vector>
+	<fstream>
+	<string>
+	<regex>
+	<time.h>
 
