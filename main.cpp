@@ -12,7 +12,7 @@ int main()
     Problemas problemas;
 
      // problemas = lerProblemas("/home/diogomarchi/Documentos/FACULDADE-MATERIAS/inteligenciaArtificial/AG_caixeiro_viajante/problemas.csv");
-    problemas = lerProblemas("C:/Users/User/Desktop/univali/IA/AG_caixeiro_viajante/problemas.csv");
+    problemas = lerProblemas("C:/Users/User/Desktop/univali/IA/AG_caixeiro_viajante/input20.csv");
 
 
     for (int prob = 0; prob < problemas.size(); prob++){
@@ -22,7 +22,9 @@ int main()
         Problema problema = problemas[prob];
 
         // quantidade de individuos
-        int qtd_individuos = calculaFatorial(problema[0].size()) / problema[0].size();
+        int qtd_individuos;
+        cout << "Defina a quantidade de individuos na populacao ";
+        cin >> qtd_individuos;
 
         cout << "A populacao tera " << qtd_individuos << " individuos " << endl;
         cout << "O numero de iteracoes " << NUM_ITERACOES << endl;
@@ -49,7 +51,7 @@ int main()
             populacao = evoluir(problema, populacao);
 
             // printa populacao evoluida
-            printa_populacao(populacao);
+            // printa_populacao(populacao);
 
             // retorna melhor individuo da populacao
             melhor = getMelhorIndividuo(populacao);
@@ -67,20 +69,6 @@ int main()
 
         getchar();
     }
-
-
-    /* Mostra populacao inicial gerada
-    for(int j = 0; j < 5; j ++){
-
-        for(int i = 0; i < 5; i ++){
-            cout << "cidade = " << populacao[j].cromossomo[i] + 1 << "  ";
-        }
-
-        cout << "\n distancia solucao[" << j << "] = " << populacao[j].distancia << endl;
-        cout << endl << endl;
-    }
-
-*/
     return 0;
 }
 
