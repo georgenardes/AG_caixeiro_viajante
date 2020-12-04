@@ -11,8 +11,8 @@ int main()
     srand(time(NULL));
     Problemas problemas;
 
-     // problemas = lerProblemas("/home/diogomarchi/Documentos/FACULDADE-MATERIAS/inteligenciaArtificial/AG_caixeiro_viajante/problemas.csv");
-    problemas = lerProblemas("C:/Users/User/Desktop/univali/IA/AG_caixeiro_viajante/input20.csv");
+     // problemas = lerProblemas("/home/diogomarchi/Documentos/FACULDADE-MATERIAS/inteligenciaArtificial/AG_caixeiro_viajante/problemas_rudimar.csv");
+    problemas = lerProblemas("C:/Users/User/Desktop/univali/IA/AG_caixeiro_viajante/problemas_rudimar.csv");
 
 
     for (int prob = 0; prob < problemas.size(); prob++){
